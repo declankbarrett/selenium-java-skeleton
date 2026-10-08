@@ -2,6 +2,7 @@ package utils;
 
 import config.ConfigReader;
 import java.time.Duration;
+import java.util.List;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -19,6 +20,14 @@ public final class WaitUtils {
 
     public static WebElement waitForClickable(WebDriver driver, By locator) {
         return newWait(driver).until(ExpectedConditions.elementToBeClickable(locator));
+    }
+
+    public static List<WebElement> waitForElementsPresent(WebDriver driver, By locator) {
+        return newWait(driver).until(ExpectedConditions.presenceOfAllElementsLocatedBy(locator));
+    }
+
+    public static boolean waitForTextPresent(WebDriver driver, By locator, String text) {
+        return newWait(driver).until(ExpectedConditions.textToBePresentInElementLocated(locator, text));
     }
 
     public static boolean waitForUrlContains(WebDriver driver, String fragment) {
