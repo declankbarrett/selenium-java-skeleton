@@ -1,0 +1,54 @@
+name: UI Tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Target environment
+        type: choice
+        options: [ qa, int, local ]
+        default: qa
+      tags:
+        description: Cucumber tag expression (e.g. @smoke)
+        required: false
+        default: ""
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+
+      - name: Build
+        run: mvn -B -ntp test-compile
+
+      - name: Run tests
+        run: >
+          mvn -B -ntp test
+          -Denvironment=${{ inputs.environment || 'qa' }}
+          -Dheadless=true
+          -Dcucumber.filter.tags="${{ inputs.tags }}"
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: |
+            target/cucumber-reports/
+            target/surefire-reports/
+            target/screenshots/
+            target/logs/
+          if-no-files-found: ignore
