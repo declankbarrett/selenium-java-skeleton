@@ -25,6 +25,10 @@ public final class WaitUtils {
         return newWait(driver).until(ExpectedConditions.urlContains(fragment));
     }
 
+    public static boolean waitForTextPresent(WebDriver driver, By locator, String text) {
+        return newWait(driver).until(ExpectedConditions.textToBePresentInElementLocated(locator, text));
+    }
+
     private static WebDriverWait newWait(WebDriver driver) {
         return new WebDriverWait(driver, Duration.ofSeconds(ConfigReader.getTimeout()));
     }
